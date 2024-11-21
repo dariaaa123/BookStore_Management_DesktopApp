@@ -1,47 +1,34 @@
-import database.DatabaseConnectionFactory;
-import model.Book;
-import model.builder.BookBuilder;
-import repository.BookRepository;
-import repository.BookRepositoryMock;
-import repository.BookRepositoryMySQL;
-import service.BookService;
-import service.BookServiceImpl;
-
+import controller.LoginController;
+import database.JDBConnectionWrapper;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import model.validator.UserValidator;
+import repository.security.RightsRolesRepository;
+import repository.security.RightsRolesRepositoryMySQL;
+import repository.user.UserRepository;
+import repository.user.UserRepositoryMySQL;
+import service.user.AuthentificationServiceImpl;
+import service.user.AuthentificationService;
+import view.LoginView;
 import java.sql.Connection;
-import java.time.LocalDate;
+import static database.Constants.Schemas.PRODUCTION;
 
-public class Main {
+public class Main extends Application {
     public static void main(String[] args)
     {
-        System.out.println("hello world");
+        launch(args);
+    }
 
-        Book book= new BookBuilder()
-                .setTitle("Ion")
-                .setAuthor("Liviu Rebreanu")
-                .setPublishedDate(LocalDate.of(1910,10,20))
-                .build();
-        System.out.println(book);
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+       final Connection connection = new JDBConnectionWrapper(PRODUCTION).getConnection();
+       final RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
+       final UserRepository userRepository = new UserRepositoryMySQL(connection,rightsRolesRepository);
+       final AuthentificationService authentificationService = new AuthentificationServiceImpl(userRepository,rightsRolesRepository);
 
-//        BookRepository bookRepository=new BookRepositoryMock();
-//        bookRepository.save(book);
-//        bookRepository.save(new BookBuilder().setAuthor("Ioan Slavici").setTitle("Moara cu noroc").setPublishedDate(LocalDate.of(1950,2,10)).build());
-//        System.out.println(bookRepository.findAll());
-//        bookRepository.removeAll();
-//        System.out.println(bookRepository.findAll());
+       final LoginView loginView = new LoginView(primaryStage);
+       final UserValidator userValidator = new UserValidator(userRepository);
+       new LoginController(loginView,authentificationService,userValidator);
 
-        Connection connection = DatabaseConnectionFactory.getConncetionWrapper(false).getConnection();
-        BookRepository bookRepository = new BookRepositoryMySQL(connection);
-        BookService bookService = new BookServiceImpl(bookRepository);
-
-
-        bookService.save(book);
-        System.out.println(bookService.findAll());
-        Book bookMoaraCuNoroc = new BookBuilder().setAuthor("Ion Slavici").setTitle("Moara cu noroc").setPublishedDate(LocalDate.of(1950,10,11)).build();
-        bookService.save(bookMoaraCuNoroc);
-        System.out.println(bookService.findAll());
-        bookService.delete(bookMoaraCuNoroc);
-        //bookService.save(book);
-        bookService.delete(book);
-        System.out.println(bookService.findAll());
     }
 }
