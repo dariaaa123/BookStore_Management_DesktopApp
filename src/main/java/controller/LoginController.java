@@ -2,6 +2,7 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import model.User;
+import model.validator.Notification;
 import model.validator.UserValidator;
 import service.user.AuthentificationService;
 import view.LoginView;
@@ -11,13 +12,11 @@ public class LoginController {
 
     private final LoginView loginView;
     private final AuthentificationService authenticationService;
-    private final UserValidator userValidator;
 
 
-    public LoginController(LoginView loginView, AuthentificationService authenticationService,UserValidator userValidator) {
+    public LoginController(LoginView loginView, AuthentificationService authenticationService) {
         this.loginView = loginView;
         this.authenticationService = authenticationService;
-        this.userValidator = userValidator;
 
         this.loginView.addLoginButtonListener(new LoginButtonListener());
         this.loginView.addRegisterButtonListener(new RegisterButtonListener());
@@ -30,10 +29,10 @@ public class LoginController {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
 
-            User user = authenticationService.login(username, password);
-            if (user == null)
+            Notification<User> loginNotification = authenticationService.login(username, password);
+            if (loginNotification.hasErrors())
             {
-                loginView.setActionTargetText("Invalid Username or password!");;
+                loginView.setActionTargetText(loginNotification.getFormattedErrors());;
 
             }else
             {
@@ -50,21 +49,13 @@ public class LoginController {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
 
-            userValidator.validate(username,password);
-            final List<String> errors = userValidator.getErrors();
-            if(errors.isEmpty())
+         Notification<Boolean> registerNotification = authenticationService.register(username,password);
+            if(registerNotification.hasErrors())
             {
-                if(authenticationService.register(username,password))
-                {
-                    loginView.setActionTargetText("Register successful!");
-                }
-                else
-                {
-                    loginView.setActionTargetText("Register NOT successful!");
-                }
+              loginView.setActionTargetText(registerNotification.getFormattedErrors());
             }
             else {
-                loginView.setActionTargetText(userValidator.getFormattedErrors());
+                loginView.setActionTargetText("Register successful!");
             }
 
 

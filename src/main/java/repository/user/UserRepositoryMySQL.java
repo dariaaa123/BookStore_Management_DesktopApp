@@ -1,6 +1,7 @@
 package repository.user;
 import model.User;
 import model.builder.UserBuilder;
+import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,9 +55,10 @@ public class UserRepositoryMySQL implements UserRepository {
     // ' or username LIKE '%admin%'; --
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
         String fetchUserSql = "SELECT * FROM `" + USER + "` WHERE `username` = ? AND `password` = ?";
 
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
@@ -68,14 +70,21 @@ public class UserRepositoryMySQL implements UserRepository {
                             .setPassword(userResultSet.getString("password"))
                             .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
                             .build();
-                    return user;
+                   findByUsernameAndPasswordNotification.setResult(user);
                 }
+                else
+                {
+                    findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                    return findByUsernameAndPasswordNotification;
+                }
+
             }
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            System.out.println(e.toString());
+            findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
 
-        return null;
+        return findByUsernameAndPasswordNotification;
     }
 
 
@@ -92,6 +101,7 @@ public class UserRepositoryMySQL implements UserRepository {
             rs.next();
             long userId = rs.getLong(1);
             user.setId(userId);
+            //String email = rs.getString(2);
 
             rightsRolesRepository.addRolesToUser(user, user.getRoles());
 
@@ -129,5 +139,4 @@ public class UserRepositoryMySQL implements UserRepository {
             return false;
         }
     }
-
 }
