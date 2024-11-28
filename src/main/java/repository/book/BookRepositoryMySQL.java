@@ -53,12 +53,14 @@ public class BookRepositoryMySQL implements BookRepository {
 
     @Override
     public boolean save(Book book) {
-        String newSql = "INSERT INTO book (author, title, publishedDate) VALUES (?, ?, ?)";
+        String newSql = "INSERT INTO book (author, title, publishedDate,stock,price) VALUES (?, ?, ?,?,?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(newSql)) {
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
             preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            preparedStatement.setInt(4,book.getStock());
+            preparedStatement.setFloat(5,book.getPrice());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -76,6 +78,23 @@ public class BookRepositoryMySQL implements BookRepository {
         try (PreparedStatement preparedStatement = connection.prepareStatement(newSql)) {
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(Book book,int newStockValue) {
+
+        String newSql = "update book set stock = ? where title = ? and author = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(newSql)) {
+            preparedStatement.setInt(1,newStockValue );
+            preparedStatement.setString(2, book.getTitle());
+            preparedStatement.setString(3, book.getAuthor());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -105,6 +124,8 @@ public class BookRepositoryMySQL implements BookRepository {
                 .setTitle(resultSet.getString("title"))
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .setStock(resultSet.getInt("stock"))
+                .setPrice(resultSet.getFloat("price"))
                 .build();
     }
 }

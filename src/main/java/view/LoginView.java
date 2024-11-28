@@ -25,6 +25,7 @@ public class LoginView {
     private Button logInButton;
     private Text actiontarget;
 
+
     public LoginView(Stage primaryStage) {
         primaryStage.setTitle("Book Store");
 
@@ -101,4 +102,12 @@ public class LoginView {
     public void addRegisterButtonListener(EventHandler<ActionEvent> signInButtonListener) {
         signInButton.setOnAction(signInButtonListener);
     }
+
+  /*  public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }*/
 }

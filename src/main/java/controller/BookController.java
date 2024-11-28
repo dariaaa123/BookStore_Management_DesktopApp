@@ -19,6 +19,7 @@ public class BookController {
 
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
+        this.bookView.addSellButtonListener(new SellButtonListener());
     }
     private class SaveButtonListener implements EventHandler<ActionEvent>
     {
@@ -27,19 +28,24 @@ public class BookController {
         public void handle(ActionEvent event) {
             String title = bookView.getTitle();
             String author = bookView.getAuthor();
+            int stock = bookView.getStock();
+            float price = bookView.getPrice();
+
 
             if (title.isEmpty() || author.isEmpty())
             {
                 bookView.addDisplayAlertMessage("Save Error", "Problem at Author or Title fields","Can not have an empty Title or Author fields.");
-            }else {
-                BookDTO bookDTO = new BookDTOBuilder().setTitle(title).setAuthor(author).build();
+            }else
+            {
+                BookDTO bookDTO = new BookDTOBuilder().setTitle(title).setAuthor(author).setStock(stock).
+                setPrice(price).build();
+
                 boolean savedBook = bookService.save(BookMapper.convertBookDTOToBook(bookDTO));
 
                 if(savedBook)
                 {
                     bookView.addDisplayAlertMessage("Successful", "Book added","Book was successfully added to the database");
                     bookView.addBookToObservableList(bookDTO);
-
                 }
                 else
                 {
@@ -74,6 +80,30 @@ public class BookController {
                 bookView.addDisplayAlertMessage("Delete Error", "Problem at deleting book","You must select a book before pressing the delete button.");
 
             }
+        }
+    }
+    private class SellButtonListener implements EventHandler<ActionEvent>
+    {
+
+        @Override
+        public void handle(ActionEvent event) {
+            BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
+            if(bookDTO != null)
+            {
+                boolean updateSuccessful = bookService.update(BookMapper.convertBookDTOToBook(bookDTO),BookMapper.convertBookDTOToBook(bookDTO).getStock()-bookView.getQuantity());
+                if (updateSuccessful)
+                {
+                    bookView.addDisplayAlertMessage("Successful", "Created order","The order was successfully made!");
+                }else
+                {
+                    bookView.addDisplayAlertMessage("Order Error", "Problem at ordering","There was a problem with the order. Please try again.");
+                }
+            }else
+            {
+                bookView.addDisplayAlertMessage("Order Error", "Problem at updating book","");
+
+            }
+
         }
     }
 

@@ -6,6 +6,25 @@ public class Book {
     private Long id;
     private String title;
     private String author;
+    private Integer stock;
+    private Float price;
+
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
 
     public Long getId() {
         return id;
@@ -45,6 +64,8 @@ public class Book {
     public String toString()
     {
         return "Book: Id: " + id + ", Title: " + title +
-                ", Author: " + author + ", Published date: "+ publishedDate;
+                ", Author: " + author + ", Published date: "+ publishedDate + ", Stock: " + stock +
+                " Price: " + price;
     }
+
 }

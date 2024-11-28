@@ -29,9 +29,9 @@ public final class ComponentFactory {
     private final UserRepository userRepository;
     private final RightsRolesRepository rightsRolesRepository;
     private final BookRepository bookRepository;
-    //private final BookView bookView;
-   //private final BookController bookController;
-   // private final BookService bookService;
+    private final BookView bookView;
+   private final BookController bookController;
+    private final BookService bookService;
     private static volatile ComponentFactory instance;
 
     public static ComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage)
@@ -54,19 +54,23 @@ public final class ComponentFactory {
     private  ComponentFactory(Boolean componentsForTest, Stage primaryStage)
     {
         Connection connection = DatabaseConnectionFactory.getConncetionWrapper(componentsForTest).getConnection();
+
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
         this.userRepository = new UserRepositoryMySQL(connection,rightsRolesRepository);
         this.authentificationService = new AuthentificationServiceImpl(userRepository,rightsRolesRepository);
         this.loginView = new LoginView(primaryStage);
         this.loginController = new LoginController(loginView,authentificationService);
+
+
         this.bookRepository = new BookRepositoryMySQL(connection);
-        //this.bookService = new BookServiceImpl(bookRepository);
-        //List<BookDTO> booksDTOs= BookMapper.convertBookListToBookDTOList(bookService.findAll());
-        //this.bookView = new BookView(primaryStage, booksDTOs);
-        //this.bookController = new BookController(bookView,bookService);
+        this.bookService = new BookServiceImpl(bookRepository);
+        List<BookDTO> booksDTOs= BookMapper.convertBookListToBookDTOList(bookService.findAll());
+        this.bookView = new BookView(primaryStage, booksDTOs);
+        this.bookController = new BookController(bookView,bookService);
+
 
     }
-/*    public BookView getBookView()
+    public BookView getBookView()
     {
         return bookView;
     }
@@ -74,15 +78,15 @@ public final class ComponentFactory {
     {
         return bookController;
 
-    }*/
+    }
     public BookRepository getBookRepository()
     {
         return bookRepository;
     }
-  /*  //public BookService getBookService()
+    public BookService getBookService()
     {
         return bookService;
-    }*/
+    }
     public AuthentificationService getAuthentificationService()
     {
         return authentificationService;
@@ -100,7 +104,7 @@ public final class ComponentFactory {
         return loginView;
     }
 
- /*   public static Stage getStage()
+  /*  public static Stage getStage()
     {
         return stage;
     }

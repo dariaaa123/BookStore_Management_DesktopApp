@@ -11,6 +11,16 @@ public class BookBuilder {
         this.book = new Book();
     }
 
+    public BookBuilder setStock(int stock)
+    {
+        book.setStock(stock);
+        return this;
+    }
+    public BookBuilder setPrice(float price)
+    {
+        book.setPrice(price);
+        return this;
+    }
     public BookBuilder setId(Long id)
     {
         book.setId(id);
