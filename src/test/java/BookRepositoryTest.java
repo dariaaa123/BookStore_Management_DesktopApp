@@ -9,7 +9,6 @@ import repository.book.BookRepositoryMySQL;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BookRepositoryTest {
@@ -18,7 +17,7 @@ public class BookRepositoryTest {
     @BeforeAll
     public static void  setup()
     {
-        bookRepository = new BookRepositoryMySQL(DatabaseConnectionFactory.getConncetionWrapper(false).getConnection());
+        bookRepository = new BookRepositoryMySQL(DatabaseConnectionFactory.getConnectionWrapper(false).getConnection());
     }
 
     @Test
@@ -29,10 +28,10 @@ public class BookRepositoryTest {
     }
 
 
-   @Test
+    @Test
     public void save()
     {
-        assertTrue(bookRepository.save( new BookBuilder().setTitle("Ion").setAuthor("Liviu Rebreanu").setPublishedDate(LocalDate.of(1990,10,2)).build()));
+        assertTrue(bookRepository.save( new BookBuilder().setTitle("Ion").setAuthor("Liviu Rebreanu").setPublishedDate(LocalDate.of(1990,10,2)).setStock(9).setPrice(9).build()));
     }
 
 }

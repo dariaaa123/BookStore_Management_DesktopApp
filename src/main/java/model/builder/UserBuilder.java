@@ -36,4 +36,8 @@ public class UserBuilder {
         return user;
     }
 
+    public UserBuilder setStringRoles(String stringRole) {
+        user.setStringRoles(stringRole);
+        return this;
+    }
 }

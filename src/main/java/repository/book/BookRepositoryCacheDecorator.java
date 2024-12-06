@@ -47,7 +47,8 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
 
     @Override
     public boolean update(Book book, int newStock) {
-        return false;
+        cache.invalidateCache();
+        return decoratedBookRepository.update(book,newStock);
     }
 
 

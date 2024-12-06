@@ -16,10 +16,11 @@ public class SQLTableCreationFactory {
                     "  PRIMARY KEY (id)," +
                     "  UNIQUE KEY id_UNIQUE (id)" +
                     ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
-            case USER -> "CREATE TABLE IF NOT EXISTS user (" +
+            case USER -> "CREATE TABLE if not exists user (" +
                     "  id INT NOT NULL AUTO_INCREMENT," +
                     "  username VARCHAR(200) NOT NULL," +
                     "  password VARCHAR(64) NOT NULL," +
+                    "  role VARCHAR(64) NOT NULL," +
                     "  PRIMARY KEY (id)," +
                     "  UNIQUE INDEX id_UNIQUE (id ASC)," +
                     "  UNIQUE INDEX username_UNIQUE (username ASC));";
@@ -61,7 +62,7 @@ public class SQLTableCreationFactory {
                     "  UNIQUE INDEX id_UNIQUE (id ASC)," +
                     "  INDEX user_id_idx (user_id ASC)," +
                     "  INDEX role_id_idx (role_id ASC)," +
-                    "  CONSTRAINT user_fkid" +
+                    "  CONSTRAINT user_kid" +
                     "    FOREIGN KEY (user_id)" +
                     "    REFERENCES user (id)" +
                     "    ON DELETE CASCADE" +

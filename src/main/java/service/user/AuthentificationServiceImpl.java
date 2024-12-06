@@ -24,9 +24,9 @@ public class AuthentificationServiceImpl implements AuthentificationService {
     }
 
     @Override
-    public Notification<Boolean> register(String username, String password) {
+    public Notification<Boolean> register(String username, String password,String role) {
 
-        Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
+        Role customerRole = rightsRolesRepository.findRoleByTitle(role);
 
         User user = new UserBuilder()
                 .setUsername(username)
@@ -67,6 +67,14 @@ public class AuthentificationServiceImpl implements AuthentificationService {
     @Override
     public boolean logout(User user) {
         return false;
+    }
+
+    @Override
+    public String getRoleFromUser(String username, String password) {
+        User user = userRepository.findByUsernameAndPassword(username,password).getResult();
+        String role = userRepository.findRoleByUserId(user.getId()).getResult().getRole();
+        return role;
+
     }
 
     private String hashPassword(String password) {

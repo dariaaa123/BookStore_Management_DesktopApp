@@ -10,6 +10,7 @@ public class User {
     private String username;
     private String password;
     private List<Role> roles;
+    private String stringRoles;
 
     public Long getId() {
         return id;
@@ -39,8 +40,16 @@ public class User {
         return roles;
     }
 
+    public String getStringRoles() {
+        return stringRoles;
+    }
+
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+    public void setStringRoles(String role)
+    {
+        this.stringRoles= role;
     }
 
     @Override

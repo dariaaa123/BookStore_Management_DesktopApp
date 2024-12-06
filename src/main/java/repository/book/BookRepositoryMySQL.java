@@ -70,7 +70,6 @@ public class BookRepositoryMySQL implements BookRepository {
         }
     }
 
-
     @Override
     public boolean delete(Book book) {
         String newSql = "DELETE FROM book WHERE author = ? AND title = ?";

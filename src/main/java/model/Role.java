@@ -7,7 +7,7 @@ public class Role {
     private String role;
     private List<Right> rights;
 
-    public Role(Long id, String role, List<Right> rights) {
+    public Role(Long id, String role,List<Right> rights) {
         this.id = id;
         this.role = role;
         this.rights = rights;

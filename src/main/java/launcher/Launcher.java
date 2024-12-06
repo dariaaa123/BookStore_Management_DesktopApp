@@ -9,7 +9,7 @@ public class Launcher extends Application {
     private Scene sceneOne,sceneTwo;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        ComponentFactory.getInstance(false, primaryStage);
+     LoginComponentFactory.getInstance(false, primaryStage);
 
     }
     public static void main(String[] args)

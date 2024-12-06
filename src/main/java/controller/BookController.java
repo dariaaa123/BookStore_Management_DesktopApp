@@ -3,20 +3,32 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import mapper.BookMapper;
+import model.Order;
+import model.User;
+import model.builder.OrderBuilder;
 import service.book.BookService;
+import service.order.OrderService;
 import view.BookView;
 import view.model.BookDTO;
 import view.model.builder.BookDTOBuilder;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Date;
+
 public class BookController {
     private final BookView bookView;
     private final BookService bookService;
+    private final OrderService orderService;
+    private final User user;
 
-    public BookController(BookView bookView, BookService bookService)
+    public BookController(BookView bookView, BookService bookService,OrderService orderService,User user)
     {
+        this.user = user;
         this.bookView = bookView;
         this.bookService = bookService;
-
+        this.orderService = orderService;
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
         this.bookView.addSellButtonListener(new SellButtonListener());
@@ -88,12 +100,17 @@ public class BookController {
         @Override
         public void handle(ActionEvent event) {
             BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
+            BookDTO oldBookDTO = bookDTO;
             if(bookDTO != null)
             {
                 boolean updateSuccessful = bookService.update(BookMapper.convertBookDTOToBook(bookDTO),BookMapper.convertBookDTOToBook(bookDTO).getStock()-bookView.getQuantity());
                 if (updateSuccessful)
                 {
+                    Order order = new OrderBuilder().setId(null).setBookTitle(bookDTO.getTitle()).setBookAuthor(bookDTO.getAuthor()).setTimestamp(Timestamp.from(Instant.now()))
+                            .setQuantity(bookView.getQuantity()).setUserId(user.getId()).build();
+                    orderService.save(order);
                     bookView.addDisplayAlertMessage("Successful", "Created order","The order was successfully made!");
+
                 }else
                 {
                     bookView.addDisplayAlertMessage("Order Error", "Problem at ordering","There was a problem with the order. Please try again.");

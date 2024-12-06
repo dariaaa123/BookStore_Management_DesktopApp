@@ -1,4 +1,5 @@
 package repository.user;
+import model.Role;
 import model.User;
 import model.builder.UserBuilder;
 import model.validator.Notification;
@@ -66,9 +67,11 @@ public class UserRepositoryMySQL implements UserRepository {
             try (ResultSet userResultSet = preparedStatement.executeQuery()) {
                 if (userResultSet.next()) {
                     User user = new UserBuilder()
+                            .setId(userResultSet.getLong("id"))
                             .setUsername(userResultSet.getString("username"))
                             .setPassword(userResultSet.getString("password"))
                             .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
+                            .setStringRoles(userResultSet.getString("role"))
                             .build();
                    findByUsernameAndPasswordNotification.setResult(user);
                 }
@@ -92,9 +95,10 @@ public class UserRepositoryMySQL implements UserRepository {
     public boolean save(User user) {
         try {
             PreparedStatement insertUserStatement = connection
-                    .prepareStatement("INSERT INTO user values (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    .prepareStatement("INSERT INTO user values (null, ?, ?,?)", Statement.RETURN_GENERATED_KEYS);
             insertUserStatement.setString(1, user.getUsername());
             insertUserStatement.setString(2, user.getPassword());
+            insertUserStatement.setString(3,"customer");
             insertUserStatement.executeUpdate();
 
             ResultSet rs = insertUserStatement.getGeneratedKeys();
@@ -138,5 +142,10 @@ public class UserRepositoryMySQL implements UserRepository {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public Notification<Role> findRoleByUserId(Long id) {
+        return null;
     }
 }

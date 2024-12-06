@@ -4,7 +4,7 @@ public class DatabaseConnectionFactory {
     private static final String SCHEMA = "library";
     private static final String TEST_SCHEMA = "test_library";
 
-    public static JDBConnectionWrapper getConncetionWrapper(boolean test) {
+    public static JDBConnectionWrapper getConnectionWrapper(boolean test) {
         if (test) {
             return new JDBConnectionWrapper(TEST_SCHEMA);
 
