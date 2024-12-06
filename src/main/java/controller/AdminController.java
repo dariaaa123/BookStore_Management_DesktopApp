@@ -2,8 +2,6 @@ package controller;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import mapper.BookMapper;
-import model.Role;
 import model.User;
 import model.builder.UserBuilder;
 import model.validator.Notification;
@@ -11,8 +9,6 @@ import service.admin.AdminService;
 import service.pdfGenerator.PDFService;
 import service.user.AuthentificationService;
 import view.AdminView;
-import view.model.BookDTO;
-import view.model.builder.BookDTOBuilder;
 
 public class AdminController {
     private final AdminView adminView;
@@ -28,7 +24,7 @@ public class AdminController {
 
         this.adminView.addSaveButtonListener(new AdminController.SaveButtonListener());
         this.adminView.addDeleteButtonListener(new AdminController.DeleteButtonListener());
-        this.adminView.addSellButtonListener(new AdminController.GenerateReportButtonListener());
+        this.adminView.addGenerateButtonListener(new AdminController.GenerateReportButtonListener());
     }
 
     public class SaveButtonListener implements EventHandler<ActionEvent> {
@@ -75,6 +71,7 @@ public class AdminController {
     public class GenerateReportButtonListener implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
+
             if (pdfService.generatePDF()) {
                 adminView.addDisplayAlertMessage("Successful", "Generated pdf","");
             } else {

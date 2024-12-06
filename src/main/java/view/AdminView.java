@@ -11,9 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import model.Role;
 import model.User;
-import view.model.BookDTO;
 
 import java.util.List;
 
@@ -113,8 +111,8 @@ public class AdminView {
         deleteButton.setOnAction(deleteButtonListener);
     }
 
-    public void addSellButtonListener(EventHandler<ActionEvent> sellButtonListener) {
-        generateReportButton.setOnAction(sellButtonListener);
+    public void addGenerateButtonListener(EventHandler<ActionEvent> generateButtonListener) {
+        generateReportButton.setOnAction(generateButtonListener);
     }
 
     public void addDisplayAlertMessage(String title, String header, String content) {
